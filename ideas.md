@@ -1,4 +1,5 @@
 Overview:
+
 Create a multiple-choice quiz game that runs in the terminal. The player answers questions and gets a final score at the end.
 
 Features to include:
@@ -23,13 +24,6 @@ sys (for clean exiting or handling input)
 
 textwrap (to format longer question text neatly)
 
-Would you like suggestions for how to expand this later on or keep it simple?
-
-You said:
-more ideas
-ChatGPT said:
-
-Absolutely! Here are more easy project ideas using only default Python modules, no code included:
 
 🔢 1. Number Guessing Game
 
