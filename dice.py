@@ -13,9 +13,12 @@ while play == True:
     print("3: Quit")
     start = int(input(": "))
     if start == 1:
+        clear_terminal()
         print("...")
+        
     elif start == 2:
-        print("...")
+        clear_terminal()
+        print("S")
     elif start == 3:
         print("Bye")
         time.sleep(1.5)
