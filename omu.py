@@ -1,6 +1,5 @@
 import curses
 
-# Main map with entrances marked as '#' (accessible positions)
 main_map = [
     list("|=================================================================================================================================|"),
     list("|            |              |              |                                  |                                                   |"),
@@ -25,13 +24,11 @@ main_map = [
     list("|===============|===========================|=================================|=================================|"),
 ]
 
-# Pad all rows in main_map to the same length
-# Find all groups of adjacent entrances and assign them to
+max_main_map_len = max(len(row) for row in main_map)
 for i, row in enumerate(main_map):
     if len(row) < max_main_map_len:
         main_map[i] += [' '] * (max_main_map_len - len(row))
 
-# Room maps
 def make_room_map(room_num):
     return [
         list("|_____________|"),
@@ -50,7 +47,6 @@ for i in range(1, 9):
 current_map_key = 'main'
 dungeon_map = maps[current_map_key]
 
-# Dynamically find exits in room maps
 def find_room_exit(room_map):
     for r, row in enumerate(room_map):
         for c, ch in enumerate(row):
@@ -58,7 +54,6 @@ def find_room_exit(room_map):
                 return (r, c)
     return None
 
-# Dynamically find entrances on main map and assign rooms
 def find_entrances():
     entrances = {}
     room_idx = 1
@@ -74,17 +69,13 @@ def find_entrances():
     return entrances
 
 entrances = find_entrances()
-
-# Find exits for each room and store in room_exits
 room_exits = {}
 for key in maps:
     if key != 'main':
         room_exits[key] = find_room_exit(maps[key])
 
-# Store last position for each map
 player_positions = {}
 for key, m in maps.items():
-    # Find a valid starting position (not a wall or entrance)
     found = False
     for r, row in enumerate(m):
         for c, ch in enumerate(row):
@@ -95,8 +86,8 @@ for key, m in maps.items():
         if found:
             break
     if not found:
-        player_positions[key] = [1, 1]  # fallback
-player_pos = player_positions['main'][:]  # copy starting position
+        player_positions[key] = [1, 1]
+player_pos = player_positions['main'][:]
 
 def draw_map(stdscr):
     stdscr.clear()
@@ -108,7 +99,6 @@ def draw_map(stdscr):
             if c >= max_x:
                 break
             try:
-                # Ensure player_pos is within bounds
                 if [r, c] == player_pos and 0 <= r < max_y and 0 <= c < max_x:
                     stdscr.addch(r, c, ord('@'), curses.color_pair(2))
                 else:
@@ -140,7 +130,6 @@ def is_adjacent_to_exit(r, c, room_key):
 
 def enter_room(room_name):
     global dungeon_map, current_map_key, player_pos
-    # Save current position
     player_positions[current_map_key] = player_pos[:]
     current_map_key = room_name
     dungeon_map = maps[room_name]
@@ -148,42 +137,29 @@ def enter_room(room_name):
 
 def return_to_main():
     global dungeon_map, current_map_key, player_pos
-    # Save current position
     player_positions[current_map_key] = player_pos[:]
     current_map_key = 'main'
     dungeon_map = maps['main']
     player_pos[:] = player_positions['main'][:]
 
-def main(stdscr):
-    global player_pos
-
-    curses.curs_set(0)
-    stdscr.nodelay(True)
-    stdscr.timeout(100)
-
 def can_move_to(r, c):
-    # Check bounds
     if r < 0 or r >= len(dungeon_map) or c < 0 or c >= len(dungeon_map[0]):
         return False
     ch = dungeon_map[r][c]
-    # Prevent moving into walls and entrances
     if ch in ('|', '=', '-', '_', '#'):
         return False
     return True
 
 def main(stdscr):
     global player_pos
-
     curses.curs_set(0)
     stdscr.nodelay(True)
     stdscr.timeout(100)
-
     curses.start_color()
     curses.use_default_colors()
-    curses.init_pair(1, curses.COLOR_WHITE, -1)   # Walls and entrances
-    curses.init_pair(2, curses.COLOR_YELLOW, -1)  # Player
-    curses.init_pair(3, curses.COLOR_CYAN, -1)    # Exits
-
+    curses.init_pair(1, curses.COLOR_WHITE, -1)
+    curses.init_pair(2, curses.COLOR_YELLOW, -1)
+    curses.init_pair(3, curses.COLOR_CYAN, -1)
     while True:
         draw_map(stdscr)
         max_y, max_x = stdscr.getmaxyx()
