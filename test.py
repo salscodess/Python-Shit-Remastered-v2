@@ -4,15 +4,21 @@ class client:
         self.__credits = credits
 
     @property
-    def credits(self):
+    def credit(self):
         return self.__credits
-    
-    @credits.setter
-    def credits(self, value):
-        if value >= 0:
-            self.__credits = value
-        else:
-            raise ValueError("Credits cannot be negative")
-    
-    @
-    
+
+    @credit.setter
+    def credit(self, value):
+        if value <= 0:
+            raise ValueError("Bad number")
+        self.__credits = value
+
+    @classmethod
+    class FreeClient(Client):
+    def __init__(self, name):
+        super().__init__(name, credits=1000) 
+
+if __name__ == "__main__":
+    c1 = client.free("sal")
+    print(c1.name,c1.credit)
+    print(c1.support)
